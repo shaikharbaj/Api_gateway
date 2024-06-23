@@ -6,6 +6,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { AppResolver } from './app.resolver';
+import { CategoryModule } from './module/category/category.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { AppResolver } from './app.resolver';
     }),
     AuthModule,
     UserModule,
+    CategoryModule,
   ],
   controllers: [AppController],
   providers: [AppService,AppResolver],
