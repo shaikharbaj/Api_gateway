@@ -7,6 +7,7 @@ export class AppResolver {
 
   @Query(() => String)
   getHello(): string {
+    console.log("sdfhds")
     return this.appService.getHello();
   }
 }

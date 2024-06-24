@@ -1,8 +1,8 @@
-import { Query } from '@nestjs/common';
-import { Resolver } from '@nestjs/graphql';
+import {} from '@nestjs/common';
+import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
+import { RegisterResponse } from './dto/Response/createuserdto';
 
 @Resolver()
 export class AuthResolver {
-
-    
+  
 }

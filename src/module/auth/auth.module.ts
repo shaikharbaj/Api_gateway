@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AuthResolver } from './auth.resolver';
 import { AuthService } from './auth.service';
-import { AuthController } from './auth.controller';
+// import { AuthController } from './auth.controller';
 import { AppService } from 'src/app.service';
 
 // export const AUTH_MICROSERVICE_REGISTRY = {
@@ -26,7 +26,9 @@ import { AppService } from 'src/app.service';
       },
     ]),
   ],
-  controllers: [AuthController],
+  controllers: [
+    // AuthController
+  ],
   providers: [AuthResolver, AuthService, AppService],
 })
 export class AuthModule {}
