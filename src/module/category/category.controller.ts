@@ -1,38 +1,60 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Inject,
+  Param,
+  Patch,
+  Post,
+  UseInterceptors,
+} from '@nestjs/common';
 import { CategoryService } from './category.service';
-
+import { Cache } from 'cache-manager';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 @Controller('category')
 export class CategoryController {
-      constructor(private readonly categoryService:CategoryService){}
-    @Get("/fetch-all-category")
-    async getAllCategory(){
-           const data = await this.categoryService.fetchAllCategory();
-           return data;
-    }
+  constructor(
+    @Inject('CACHE_MANAGER') private cacheManager: Cache,
+    private readonly categoryService: CategoryService,
+  ) {}
 
-    @Get("/fetch-all-active-category")
-    async fetAllActiveCategory(){
-          return await this.categoryService.fetchAllActiveCategory();
-    }
+  @UseInterceptors(CacheInterceptor)
+  @Get('/fetch-all-category')
+  async getAllCategory() {
+    console.log('inside controller');
+    //     const cachedData = await this.cacheManager.get('categories');
 
-    @Get("/:id")
-   async FetchCategoryById(@Param("id") id:number){
-            console.log(id);
-            return await this.categoryService.fetchcategoryById(id)
-    }
+    //     if (cachedData) {
+    //       console.log('Got data from cache');
+    //       return cachedData;
+    //     }
+    const data = await this.categoryService.fetchAllCategory();
+    //     await this.cacheManager.set('categories', data);
+    return data;
+  }
 
-    @Post("/create")
-    async createCategory(@Body() data:any){
-         return await this.categoryService.createCategory(data)
-    }
+  @Get('/fetch-all-active-category')
+  async fetAllActiveCategory() {
+    return await this.categoryService.fetchAllActiveCategory();
+  }
 
-    @Patch("/update/:id")
-    async UpdateCategory(@Param("id") id:number,@Body() data:any){
-           return await this.categoryService.updateCategory(id,data); 
-    }
+  @Get('/:id')
+  async FetchCategoryById(@Param('id') id: number) {
+    console.log(id);
+    return await this.categoryService.fetchcategoryById(id);
+  }
 
-    @Delete(":id")
-    async DeleteCategory(){
+  @Post('/create')
+  async createCategory(@Body() data: any) {
+    return await this.categoryService.createCategory(data);
+  }
 
-    }
+  @Patch('/update/:id')
+  async UpdateCategory(@Param('id') id: number, @Body() data: any) {
+    return await this.categoryService.updateCategory(id, data);
+  }
+
+  @Delete(':id')
+  async DeleteCategory() {}
 }

@@ -1,28 +1,32 @@
-// src/common/filters/graphql-exceptions.filter.ts
-import { Catch, ArgumentsHost, HttpStatus, HttpException } from '@nestjs/common';
-import { GqlExceptionFilter, GqlArgumentsHost } from '@nestjs/graphql';
+// src/common/filters/graphql-exception.filter.ts
+
+import {
+  Catch,
+  ExceptionFilter,
+  ArgumentsHost,
+  HttpException,
+} from '@nestjs/common';
+import { GqlArgumentsHost, GqlExceptionFilter } from '@nestjs/graphql';
 
 @Catch()
 export class GraphqlExceptionFilter implements GqlExceptionFilter {
   catch(exception: any, host: ArgumentsHost) {
     const gqlHost = GqlArgumentsHost.create(host);
     const ctx = gqlHost.getContext();
-
-    // Determine HTTP status code
+    const response = ctx.res;
     const status =
-      exception instanceof HttpException
-        ? exception.getStatus()
-        : HttpStatus.INTERNAL_SERVER_ERROR;
+      exception instanceof HttpException ? exception.getStatus() : 500;
 
-    // Extract error message
-    const message =
-      exception.message || exception.response.message || 'Internal server error';
-
-    // Format error response for GraphQL
-    return {
-      statusCode: status,
-      message,
-      path: ctx.req.url,
+    const errorResponse = {
+      errors: [
+        {
+          message: exception.message || 'Internal server error',
+          locations: exception.locations,
+          path: exception.path,
+        },
+      ],
     };
+
+    response.status(status).json(errorResponse);
   }
 }

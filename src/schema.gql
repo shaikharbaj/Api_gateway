@@ -2,13 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Avatars {
-  id: String!
-  public_id: String!
-  url: String!
-  userId: String!
-}
-
 input CreateTodoInput {
   title: String!
 }
@@ -25,7 +18,7 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 type Mutation {
-  createAdmin(createAdminInput: CreateUserInput!): SigninResponse!
+  createAdmin(createAdminInput: CreateUserInput!): SignUpResponse!
   createTodo(createTodoInput: CreateTodoInput!): Todo!
 }
 
@@ -34,8 +27,7 @@ type Query {
   todos: [Todo!]!
 }
 
-type SigninResponse {
-  token: String!
+type SignUpResponse {
   user: User!
 }
 
@@ -46,11 +38,10 @@ type Todo {
 
 type User {
   address: String
-  avatar: Avatars
   avatarId: Float
   createdAt: DateTime!
   email: String!
-  id: String!
+  id: Float!
   name: String!
   password: String!
   phone_number: Float
