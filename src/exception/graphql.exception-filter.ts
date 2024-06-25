@@ -1,30 +1,28 @@
-import { Catch, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
-import { GqlExceptionFilter } from '@nestjs/graphql';
-import { Request, Response } from 'express'; // Import Request and Response types
+// src/common/filters/graphql-exceptions.filter.ts
+import { Catch, ArgumentsHost, HttpStatus, HttpException } from '@nestjs/common';
+import { GqlExceptionFilter, GqlArgumentsHost } from '@nestjs/graphql';
 
 @Catch()
-export class AllExceptionsFilter implements GqlExceptionFilter {
-  catch(exception: unknown, host: ArgumentsHost) {
-    const ctx = host.switchToHttp();
-    const response = ctx.getResponse<Response>(); // Ensure correct response type
+export class GraphqlExceptionFilter implements GqlExceptionFilter {
+  catch(exception: any, host: ArgumentsHost) {
+    const gqlHost = GqlArgumentsHost.create(host);
+    const ctx = gqlHost.getContext();
 
-    if (exception instanceof HttpException) {
-      const status = exception.getStatus();
-      const message = exception.message || 'Internal Server Error';
-      response.status(status).json({
-        statusCode: status,
-        message,
-        timestamp: new Date().toISOString(),
-        path: ctx.getRequest<Request>().url,
-      });
-    } else {
-      // Handle unexpected errors
-      response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: 'Internal Server Error',
-        timestamp: new Date().toISOString(),
-        path: ctx.getRequest<Request>().url,
-      });
-    }
+    // Determine HTTP status code
+    const status =
+      exception instanceof HttpException
+        ? exception.getStatus()
+        : HttpStatus.INTERNAL_SERVER_ERROR;
+
+    // Extract error message
+    const message =
+      exception.message || exception.response.message || 'Internal server error';
+
+    // Format error response for GraphQL
+    return {
+      statusCode: status,
+      message,
+      path: ctx.req.url,
+    };
   }
 }

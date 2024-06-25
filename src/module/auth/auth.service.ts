@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
+import { CreateUserInput } from './dto/createuser.dto';
 
 @Injectable()
 export class AuthService {
@@ -19,10 +20,17 @@ export class AuthService {
     const payload = {
       email, password
     }
-    console.log('hiii');
     return lastValueFrom(this.client.send(
       { role: 'AdminLogin', cmd: 'admin-login' },
       { data: payload ,auth,id},
+    ));
+  }
+
+
+  async admin_register(createAdminInput:CreateUserInput){
+   return await lastValueFrom(this.client.send(
+      { role: 'RegisterAdmin', cmd: 'admin-register' },
+      { data: createAdminInput},
     ));
   }
 }

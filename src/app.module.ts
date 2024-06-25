@@ -8,9 +8,11 @@ import { join } from 'path';
 import { AppResolver } from './app.resolver';
 import { CategoryModule } from './module/category/category.module';
 import { TodoModule } from './module/todo/todo.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({isGlobal:true}),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
